@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat app</title>
+<style>
+  #container {
+    width: 700px;
+    margin: 0 auto;
+  }
+  .chat-input {
+    width: 300px;
+    height: 35px;
+    border: solid 1px #444;
+  }
+  .chat-submit {
+    width: 50px;
+    height: 35px;
+    border: solid 1px #444;
+  }
+  .chat-window {
+    height: 300px;
+    width: 400px;
+  }
+  #chatSection {
+    float: left;
+    border: 1px grey solid;
+    border-radius: 10px;
+    padding: 10px;
+  }
+</style>
+  </head>
+  <body>
+    <div id="container">
+      <h1>
+        STIN chat bot
+      </h1>
+      <div id="chatSection">
+        <div id="chat-window" class="chat-window"></div>
+        <div class="chat-form">
+          <label id="msg" class="chat-label">
+            Zde můžete psát:
+		</label>
+            <input id="text" type="text" class="chat-input" />
+          
+          <button id="btn1" onclick="submitClick()"> Odeslat </button>
+	  <button id="btn2" onclick="changeL()"> EN</button>
+        </div>
+      </div>
+    </div>
+<p id="language">1</p>
+
+
+    <script src="script.js"></script>
+<script src="script2.js"></script>
+  </body>
+</html>

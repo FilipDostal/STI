@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+	.jsn {
+	visibility: hidden;
+	}
+	</style>
+  <% include ../partials/header.ejs %>
+</head>
+
+<body>
+
+<% include ../partials/nav.ejs %>
+
+<div class="container">
+<button id="jason" class="btn btn-primary" onclick="showJS()">Ukázat Json</button> <button class="btn btn-primary" id="hideDone" onclick="showDone()">Pouze nesplněné</button>
+<h2>TODO List</h2>
+
+<ul class="list-group">
+    <% results.forEach(function(r) { if(r.done){ %>
+        <li class="list-group-item disabled"><%= r.popis %> <div class="button-container"><form action="/delete" method="post"><div><button name="taskId" type="submit" class="btn btn-danger" value="<%= r.id %>">Smazat</button></div></form></div></li>
+    <% }else{ %>
+	<li class="list-group-item"><%= r.popis %>  <div class="button-container"><form action="/complete" method="post"><div><button name="taskId" type="submit" class="btn btn-success" value="<%= r.id %>">Splnit</button> <button class="btn btn-secondary" name="updateId" type="button" onclick="upEnable(<%= r.id %>)" value="<%= r.id %>">Upravit</button></div></form> <form action="/delete" method="post"><div><button name="taskId" type="submit" class="btn btn-danger" value="<%= r.id %>">Smazat</button></div></form></div></li>
+<%}}); %>
+</ul>
+
+<div class="formy">
+<form name="myForm" id="newForm" action="/newTask" onsubmit="return validateForm()" method="post" class="text-center border border-light p-5">
+  <p class="h4 mb-4">Nový úkol</p>
+  <input type="text" name="popis" class="form-control mb-4" placeholder="Popisek">
+  <input type="submit" value="Přida úkol" class="btn btn-info btn-block my-4">
+</form>
+</div>
+<div class="formy">
+<form name="upForm" class="jsn" id="updateForm" action="/update" method="post" onsubmit="return validateForm2()">
+  <p class="h4 mb-4">Upravit popis</p>
+  <input type="text"  name="popis" class="form-control mb-4" placeholder"Nový popis">
+  <input type="hidden" id="custId" name="custId" value="0">
+  <input type="submit" value="Upravit" class="btn btn-info btn-block my-4">
+</form>
+</div>
+</div>
+<div class="jsn" id="jsn">
+<div id="toCopy">
+<%= JSON.stringify(results) %>
+</div>
+<button class="btn btn-primary"  onclick="copy()">Kopírovat Json</button>
+</div>
+
+<script>
+function showJS() {
+var btn = document.getElementById("jason");
+  var x = document.getElementById("jsn");
+  if (x.style.visibility === 'visible') {
+    btn.innerHTML = "Ukázat Json";
+    x.style.visibility = 'hidden';
+  } else {
+    x.style.visibility = 'visible';
+    x.scrollIntoView();
+    btn.innerHTML = "Schovat Json";
+  }
+}
+
+function showDone() {
+ var divsToHide = document.getElementsByClassName("list-group-item disabled"); //divsToHide is an array
+    for(var i = 0; i < divsToHide.length; i++){
+        divsToHide[i].style.visibility = "hidden"; // or
+        divsToHide[i].style.display = "none"; // depending on what you're doing
+    }
+}
+
+function validateForm() {
+  var x = document.forms["myForm"]["popis"].value;
+  if (x == "") {
+    alert("Vyplň popis!");
+    return false;
+  }
+}
+
+function validateForm2() {
+  var x = document.forms["upForm"]["custId"].value;
+  if (x == "0" || x == 0 || x.equals("0")) {
+    alert("Wrong!");
+    return false;
+  }
+  var y = document.forms["upForm"]["popis"].value;
+  if (y == "") {
+    alert("Vyplň popis!");
+    return false;
+  }
+}
+
+function upEnable(x) {
+ document.forms["upForm"]["custId"].value = x;
+ document.getElementById("newForm").style.visibility = 'hidden';
+ document.getElementById("updateForm").style.visibility = 'visible';
+  
+}
+
+function copy() {
+  var elm = document.getElementById("toCopy");
+  // for Internet Explorer
+
+  if(document.body.createTextRange) {
+    var range = document.body.createTextRange();
+    range.moveToElementText(elm);
+    range.select();
+    document.execCommand("Copy");
+    alert("Json skopírován");
+  }
+  else if(window.getSelection) {
+    // other browsers
+
+    var selection = window.getSelection();
+    var range = document.createRange();
+    range.selectNodeContents(elm);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    document.execCommand("Copy");
+    alert("Json skopírován");
+  }
+}
+
+
+</script>
+</body>
+</html>
