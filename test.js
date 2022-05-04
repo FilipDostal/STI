@@ -1,0 +1,90 @@
+const { spawn } = require('child_process');
+const got = require('got');
+const fx = require('money');
+const test = require('tape');
+const bckend = require('./index');
+
+
+test('show name', (t) => {
+  t.plan(2);
+  t.equal(bckend.showName("1"),"Moje jméno je ChatBot()");
+  t.equal(bckend.showName("0"),"My name is ChatBot()");
+
+});
+
+test('load history', (t) => {
+  t.plan(1);
+  
+  t.notEqual(bckend.loadHistory(),undefined);
+
+});
+
+test('show history', (t) => {
+  t.plan(1);
+  t.equal(bckend.showHistory("1"),undefined);
+
+});
+
+test('connect to openexchangerate', (t) => {
+  t.plan(2);
+  bckend.callOER()
+  t.notEqual(bckend.fx.rates,null);
+  t.notEqual(bckend.fx.base,null);
+  
+
+});
+
+test('show time', (t) => {
+  t.plan(2);
+  let date_ob = new Date();
+  let hours = date_ob.getHours()+2;
+  let minutes = date_ob.getMinutes();
+  let seconds = date_ob.getSeconds();
+  t.equal(bckend.showTime("0"),"Current time is " + hours + ":" + minutes + ":" + seconds + ".");
+  t.equal(bckend.showTime("1"),"Momentální čas je " + hours + ":" + minutes + ":" + seconds + ".");
+
+});
+
+
+test('test command resolver', (t) => {
+  t.plan(8);
+  t.equal(bckend.commandResolver("!hello","1"),"Moje jméno je ChatBot()");
+  t.equal(bckend.commandResolver("!hello","0"),"My name is ChatBot()");
+
+  let date_ob = new Date();
+  let hours = date_ob.getHours()+2;
+  let minutes = date_ob.getMinutes();
+  let seconds = date_ob.getSeconds();
+  t.equal(bckend.commandResolver("!time","0"),"Current time is " + hours + ":" + minutes + ":" + seconds + ".");
+  t.equal(bckend.commandResolver("!time","1"),"Momentální čas je " + hours + ":" + minutes + ":" + seconds + ".");
+  t.throws(function() {bckend.commandResolver("!rate")});
+  t.equal(bckend.commandResolver("!history"),undefined);
+  t.equal(bckend.commandResolver("asdad","0"),"I dont know what you mean");
+  t.equal(bckend.commandResolver("asdad","1"),"Tak tohle neznám");
+
+
+});
+
+const env = Object.assign({}, process.env, {PORT: 5000});
+const child = spawn('node', ['index.js'], {env});
+
+test('responds to requests', (t) => {
+  t.plan(4);
+
+  // Wait until the server is ready
+  child.stdout.on('data', _ => {
+    // Make a request to our app
+    request('http://127.0.0.1:5000', (error, response, body) => {
+      // stop the server
+      child.kill();
+
+      // No error
+      t.false(error);
+      // Successful response
+      t.equal(response.statusCode, 200);
+      // Assert content checks
+      t.notEqual(body.indexOf("<title>Node.js Getting Started on Heroku</title>"), -1);
+      t.notEqual(body.indexOf("Getting Started on Heroku with Node.js"), -1);
+    });
+  });
+});
