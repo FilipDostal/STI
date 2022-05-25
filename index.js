@@ -116,12 +116,12 @@ async function loadHistory(lang) {
     })
     //const results = { 'results': (result) ? result.rows : null };
     rate_data = results;
-    //client.release();
+    client.release();
     calcRecomendation();
   }
   catch (err) {
     console.log("Cannot connect to DB");
-    client.release();
+    //client.release();
   }
 }
 
