@@ -1,28 +1,32 @@
-const { spawn } = require('child_process');
+const { spawn, ChildProcess } = require('child_process');
 const got = require('got');
 const fx = require('money');
 const test = require('tape');
 const bckend = require('./index');
+
+const env = Object.assign({}, process.env, {PORT: 5000});
+const child = spawn('node', ['index.js'], {env});
 
 
 test('show name', (t) => {
   t.plan(2);
   t.equal(bckend.showName("1"),"Moje jméno je ChatBot()");
   t.equal(bckend.showName("0"),"My name is ChatBot()");
-
+  t.end();
 });
 
 test('load history', (t) => {
   t.plan(1);
   
   t.notEqual(bckend.loadHistory(),undefined);
+  t.end();
 
 });
 
 test('show history', (t) => {
   t.plan(1);
   t.equal(bckend.showHistory("1"),undefined);
-
+  t.end;
 });
 
 test('connect to openexchangerate', (t) => {
@@ -30,7 +34,7 @@ test('connect to openexchangerate', (t) => {
   bckend.callOER()
   t.notEqual(bckend.fx.rates,null);
   t.notEqual(bckend.fx.base,null);
-  
+  t.end();
 
 });
 
@@ -42,7 +46,7 @@ test('show time', (t) => {
   let seconds = date_ob.getSeconds();
   t.equal(bckend.showTime("0"),"Current time is " + hours + ":" + minutes + ":" + seconds + ".");
   t.equal(bckend.showTime("1"),"Momentální čas je " + hours + ":" + minutes + ":" + seconds + ".");
-
+  t.end();
 });
 
 
@@ -61,10 +65,18 @@ test('test command resolver', (t) => {
   t.equal(bckend.commandResolver("!history"),undefined);
   t.equal(bckend.commandResolver("asdad","0"),"I dont know what you mean");
   t.equal(bckend.commandResolver("asdad","1"),"Tak tohle neznám");
-
-
+  t.end();
+  child.kill();
 });
 
+/*test('terminate', (t) => {
+  t.plan(1);
+  t.equal(true,true);
+  setTimeout(function() {}, 5000);
+  process.exit(1);});*/
+
+test.onFinish(() => process.exit(0));
+/*
 const env = Object.assign({}, process.env, {PORT: 5000});
 const child = spawn('node', ['index.js'], {env});
 
@@ -87,4 +99,4 @@ test('responds to requests', (t) => {
       t.notEqual(body.indexOf("Getting Started on Heroku with Node.js"), -1);
     });
   });
-});
+});*/
