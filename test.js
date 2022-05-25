@@ -1,4 +1,4 @@
-const { spawn } = require('child_process');
+const { spawn, ChildProcess } = require('child_process');
 const got = require('got');
 const fx = require('money');
 const test = require('tape');
@@ -13,6 +13,7 @@ test('show name', (t) => {
   t.equal(bckend.showName("1"),"Moje jméno je ChatBot()");
   t.equal(bckend.showName("0"),"My name is ChatBot()");
   t.end();
+
 });
 
 test('string builder', (t) => {
@@ -103,6 +104,7 @@ test('test command resolver', (t) => {
   t.equal(true,true);
   setTimeout(function() {}, 5000);
   process.exit(1);});*/
+
 /*
   test('responds to requests', (t) => {
     t.plan(4);
@@ -125,4 +127,31 @@ test('test command resolver', (t) => {
     });
   });*/
 
+
+
 test.onFinish(() => process.exit(0));
+/*
+const env = Object.assign({}, process.env, {PORT: 5000});
+const child = spawn('node', ['index.js'], {env});
+
+test('responds to requests', (t) => {
+  t.plan(4);
+
+  // Wait until the server is ready
+  child.stdout.on('data', _ => {
+    // Make a request to our app
+    request('http://127.0.0.1:5000', (error, response, body) => {
+      // stop the server
+      child.kill();
+
+      // No error
+      t.false(error);
+      // Successful response
+      t.equal(response.statusCode, 200);
+      // Assert content checks
+      t.notEqual(body.indexOf("<title>Node.js Getting Started on Heroku</title>"), -1);
+      t.notEqual(body.indexOf("Getting Started on Heroku with Node.js"), -1);
+    });
+  });
+});*/
+
