@@ -1,0 +1,40 @@
+{
+  "name": "node-js-getting-started",
+  "version": "0.3.0",
+  "description": "STIN BACKEND APP",
+  "engines": {
+    "node": "14.x"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js",
+    "coverage": "nyc npm run test"
+  },
+  "dependencies": {
+    "ejs": "^3.1.7",
+    "exchange-rates-api": "^1.1.0",
+    "express": "^4.15.2",
+    "https": "^1.0.0",
+    "money": "^0.2.0",
+    "node-fetch": "^3.2.3",
+    "node-schedule": "^2.1.0",
+    "pg": "^8.7.3",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "got": "^11.3.0",
+    "nyc": "^15.1.0",
+    "tape": "^4.7.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heroku/node-js-getting-started"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "license": "MIT"
+}
