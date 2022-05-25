@@ -28,7 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')))
   })
   .listen(PORT, () => {
     console.log(`Listening on ${PORT}`);
-    try { loadHistory(); /*callOER();*/ }
+    try { loadHistory(); callOER(); }
     catch (err) {
     }
   })
@@ -68,8 +68,13 @@ let rate_data;
 async function loadHistory(lang) {
   try {
     const client = await pool.connect();
-    const result = await client.query("SELECT * from rate_history;");
-    const results = { 'results': (result) ? result.rows : null };
+    const result = await client.query("SELECT date_trunc('day',posting_date)::date as date, rate from rate_history;");
+    let results = "";
+    result.rows.forEach(elelment => {
+      let toCrop = elelment.date + " ";
+      results = results + toCrop.substring(0,15) + " : " + elelment.rate + "\n"
+    })
+    //const results = { 'results': (result) ? result.rows : null };
     rate_data = results;
     client.release();
   }
@@ -100,7 +105,7 @@ function showRate(lang) {
 
 const jobRefreshRate = scheduler.scheduleJob('30 * * * *', function () { callOER() });
 
-const jobDailyRate = scheduler.scheduleJob('* 06 * * *', async function () {
+const jobDailyRate = scheduler.scheduleJob('00 06 * * *', async function () {
   try {
     let conversion = fx.convert(1, { from: "EUR", to: "CZK" });
     const client = await pool.connect();
@@ -125,6 +130,7 @@ function callOER() {
           let json = JSON.parse(body);
           fx.rates = json.rates;
           fx.base = json.base;
+          console.log("Called");
         } catch (error) {
           console.error(error.message);
         };
